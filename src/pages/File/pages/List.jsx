@@ -7,6 +7,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
+import Cookies from "js-cookie"
 import {
   List as AntList,
   Avatar,
@@ -65,7 +66,10 @@ function List(props) {
   const uploadProps = {
     name: 'multipartFiles',
     multiple: true,
-    action: `http://localhost:29000/api/file/upload/?parentId=${parentId}`,
+    action: `/api/file/upload/?parentId=${parentId}`,
+    headers: {
+      token: Cookies.get("token")
+    },
     onChange(info) {
       const { status } = info.file;
       if (status === 'uploading') {
@@ -335,7 +339,7 @@ function List(props) {
           setDisplayDownloadModal(() => true);
           setDownloading(() => ({ name, progress: 0, status: true }));
           axios({
-            url: `http://localhost:29000/api/file/download/id/`,
+            url: `/api/file/download/id/`,
             method: 'get',
             params: { id },
             responseType: 'blob',

@@ -1,9 +1,10 @@
-import { message } from 'antd';
+import {message} from 'antd';
 import axios from 'axios';
+import Cookies from 'js-cookie'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://localhost:29000/api', // url = base url + request url
+  baseURL: '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000, // request timeout
 });
@@ -18,6 +19,9 @@ service.interceptors.request.use(
     successTip = config.successTip || false;
     if (config.errorTip !== undefined) {
       errorTip = config.errorTip;
+    }
+    if (Cookies.get('token')) {
+      config.headers['token'] = Cookies.get('token');
     }
     return config;
   },
@@ -46,9 +50,23 @@ service.interceptors.response.use(
       if (successTip) {
         message.success(res.message);
       }
+    } else if (res.code === 300) {
+      Cookies.remove("token");
+      message.info("请先登录。")
+      window.location.hash = '/login'
     } else {
       if (errorTip) {
-        message.error(res.message);
+        if (res.data === res.message) {
+          message.error(res.message);
+        } else {
+          if (res.data !== undefined && res.data !== null && res.data.length !== undefined) {
+            for (let i = 0; i < res.data.length; i++) {
+              message.error(res.data[i]);
+            }
+          } else {
+            message.error(res.data);
+          }
+        }
       }
     }
 

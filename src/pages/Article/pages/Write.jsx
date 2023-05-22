@@ -58,7 +58,7 @@ function buildTree(arr) {
   const result = [];
   for (let a of Reflect.ownKeys(obj)) {
     const { parentId } = obj[a];
-    if (parentId === 0) {
+    if (parentId === 1) {
       result.push(obj[a]);
     } else {
       if (parentId > 0) {
@@ -184,6 +184,9 @@ function Write(props) {
     value.content = content;
     value.tag = tagKeys;
     value.title = title;
+    // if (value.coverPictureUrl === 'file://local.file/default.img' || value.coverPictureUrl === 'file://local.img/default.jpg') {
+    //   value.coverPictureUrl = `https://up.api.daidr.me/apis/imgholder/800x500?text=${title}&bg=806d9e&fg=ffffff`
+    // }
     setSubmitting(() => true);
     let result = { code: 400 };
     if (state === null) {

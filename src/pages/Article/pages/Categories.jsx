@@ -16,7 +16,6 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'umi';
-import { useModel } from '../../../.umi/exports';
 import {
   deleteCategory,
   getCategoryById,
@@ -68,7 +67,6 @@ function Categories(props) {
   const [categoryKey, setCategoryKey] = useState(-3);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const navigate = useNavigate();
-  const { displayCategoryManager, setCategoryTagManager } = useModel('article');
 
   const openSelectParentModal = () => {
     if (!disable) {
@@ -211,7 +209,7 @@ function Categories(props) {
             bordered
             headerBordered
           >
-            <Category root={0} checkable select={select} onCheck={onCheck} />
+            <Category root={1} checkable select={select} onCheck={onCheck} />
           </ProCard>
         </Col>
         <Col span={16}>

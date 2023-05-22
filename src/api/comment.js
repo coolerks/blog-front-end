@@ -12,7 +12,7 @@ function removeComment(id) {
   if (typeof id === 'number') {
     return request({
       url: `/comment/`,
-      params: { id: id },
+      params: {id: id},
       method: 'delete',
       errorTip: false,
     });
@@ -28,4 +28,13 @@ function removeComment(id) {
   });
 }
 
-export { getComment, removeComment };
+function addComment(data) {
+  return request({
+    url: '/comment/admin/',
+    method: 'post',
+    data,
+    successTip: true
+  });
+}
+
+export {getComment, removeComment, addComment};

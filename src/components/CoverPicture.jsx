@@ -76,7 +76,7 @@ function CoverPicture(props) {
                     cover={
                       <img
                         height={200}
-                        src={`http://localhost:29000/api/file/download/url?url=${encodeURI(
+                        src={`/api/file/download/url?url=${encodeURI(
                           'file://local.img/' + item.name,
                         )}&compression=true`}
                       />

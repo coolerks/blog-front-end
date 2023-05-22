@@ -1,5 +1,15 @@
+import Editor from "@monaco-editor/react";
+
 function ThemeDevelopment(props) {
-  return <>主题开发</>;
+  return (
+    <>
+      <Editor
+        height="90vh"
+        defaultLanguage="html"
+        defaultValue="// some comment"
+      />
+    </>
+  )
 }
 
 export default ThemeDevelopment;

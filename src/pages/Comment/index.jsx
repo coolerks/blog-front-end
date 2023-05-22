@@ -1,20 +1,41 @@
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Popconfirm, Space, Table, message } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import { getIdTitleMap } from '../../api/article';
-import { getComment, removeComment } from '../../api/comment';
+import {PageContainer, ProTable} from '@ant-design/pro-components';
+import {Popconfirm, Space, Table, message, Modal, Input} from 'antd';
+import {useEffect, useRef, useState} from 'react';
+import {getIdTitleMap} from '../../api/article';
+import {addComment, getComment, removeComment} from '../../api/comment';
+
+const {TextArea} = Input;
 
 function Index(props) {
   const table = useRef();
   const [idTitleMap, setIdTitleMap] = useState({});
+  const [displayReplyModal, setDisplayModal] = useState(false);
+  const [comment, setComment] = useState({
+    "articleId": 0,
+    "content": "",
+    "parentId": 0
+  })
   useEffect(() => {
     loadingIdTitleMap();
   }, []);
 
+  async function submit() {
+    const result = await addComment(comment);
+    if (result.code === 200) {
+      table.current.reload();
+      setDisplayModal(() => false);
+    }
+  }
+
+  function reply(articleId, parentId) {
+    setDisplayModal(() => true);
+    setComment(pre => ({...pre, parentId, articleId}))
+  }
+
   async function loadingIdTitleMap() {
     const result = await getIdTitleMap();
     if (result.code === 200) {
-      const { data } = result;
+      const {data} = result;
       setIdTitleMap(() => data);
     }
   }
@@ -64,7 +85,7 @@ function Index(props) {
               >
                 <a>删除</a>
               </Popconfirm>
-              <a>回复</a>
+              <a onClick={() => reply(record.articleId, record.id)}>回复</a>
             </Space>
           </>
         );
@@ -101,7 +122,7 @@ function Index(props) {
     }
   }
 
-  const select = ({ selectedRowKeys, selectedRows, onCleanSelected }) => {
+  const select = ({selectedRowKeys, selectedRows, onCleanSelected}) => {
     return (
       <Space size={24}>
         <span>
@@ -117,7 +138,7 @@ function Index(props) {
         </span>
         <span>
           已选 {selectedRowKeys.length} 项
-          <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+          <a style={{marginInlineStart: 8}} onClick={onCleanSelected}>
             取消选择
           </a>
         </span>
@@ -144,8 +165,17 @@ function Index(props) {
       total: result.data.total,
     };
   }
+
   return (
-    <PageContainer header={{ title: false }} ghost>
+    <PageContainer header={{title: false}} ghost>
+      <Modal
+        title={'回复'}
+        open={displayReplyModal}
+        okText={'提交'}
+        onCancel={() => setDisplayModal(() => false)}
+        onOk={() => submit()}>
+        <TextArea onChange={e => setComment(pre => ({...pre, content: e.target.value}))} rows={10} />
+      </Modal>
       <ProTable
         columns={columns}
         request={loadData}
@@ -155,7 +185,7 @@ function Index(props) {
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
         }}
         tableAlertOptionRender={select}
-        pagination={{ pageSize: 10 }}
+        pagination={{pageSize: 10}}
         // toolBarRender={toolBar}
       ></ProTable>
     </PageContainer>

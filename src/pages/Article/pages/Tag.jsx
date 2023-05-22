@@ -32,7 +32,7 @@ function Tag(props) {
 
   const [tag, setTag] = useState({
     name: '',
-    color: '',
+    color: '#aabbcc',
     alias: '',
     coverPicture: '',
   });
@@ -43,7 +43,7 @@ function Tag(props) {
 
   async function loadingData() {
     const result = await getAllTag();
-    if (result.code === 200) {
+    if (result.code === 200 && result.data.length > 0) {
       setTagList((pre) => {
         form.setFieldsValue(result.data[0]);
         setTag(result.data[0]);
